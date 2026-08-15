@@ -1,115 +1,99 @@
-# 🌐 NexusAI — Hyper-Agentic Search & Deep Research Engine
+# 🌐 NexusAI
 
-**NexusAI** is a multi-agent AI search and synthesis platform built with **TypeScript**, **LangChain Expression Language (LCEL)**, and **Vector Cosine Similarity Reranking**.
 
-Inspired by Perplexity AI, NexusAI features **8 distinct specialized agents**, real-time Server-Sent Events (SSE) streaming, precision source citations (`[1]`, `[2]`), and a **Command-Center UI** with an interactive **Real-Time Agent Execution Telemetry Drawer**.
+NexusAI is an AI-based search application that uses different AI agents for different tasks.
 
----
 
-## 🚀 Key Features
+It is built using **TypeScript, LangChain, SearXNG, and AI models**.
 
-- **8 Specialized Agents**:
-  - **Group A (Search & Answer)**:
-    1. 🌐 **Web Intelligence Agent**: Multi-engine retrieval with vector reranking and factual cited answers.
-    2. 🎓 **Academic Research Agent**: Literature synthesis targeting ArXiv, Google Scholar, PubMed, and scholarly databases.
-    3. 👥 **Reddit & Community Agent**: Discussion sentiment analysis, crowd consensus, and contrasting viewpoints.
-    4. 📺 **YouTube Insights Agent**: Video tutorial breakdowns, lecture timestamps, and channel discoveries.
-  - **Group B (Search & List)**:
-    5. 🖼️ **Visual Discovery Agent**: High-resolution image card extraction with fullscreen zoom lightbox.
-    6. 🎬 **Video Stream Agent**: Playable video cards with responsive inline player modals.
-  - **Group C (Specialized Intelligence & Utilities)**:
-    7. ✍️ **Writing Studio Agent**: Zero-search generative drafting, code architecture, and formatting assistant.
-    8. 💡 **Cognitive Suggestion Generator**: Follow-up query engine running at `temperature = 0` for diversity.
-
-- **Real-Time Pipeline Telemetry**:
-  - Watch the multi-agent thought pipeline execute step-by-step:
-    1. **Query Rephrasing** $\to$ Standalone search query formulation.
-    2. **Multi-Engine Retrieval** $\to$ Engines queried & raw hits.
-    3. **Cosine Vector Reranking** $\to$ Semantic similarity scoring matrix.
-    4. **Context & Cited Synthesis** $\to$ Streaming markdown with hoverable citation tooltips.
-
-- **Resilient Multi-Engine Backend**:
-  - Integrates natively with [SearXNG](https://docs.searxng.org/).
-  - Includes an intelligent automatic fallback search provider so the entire application runs seamlessly even if SearXNG is offline.
-
-- **Dual Interfaces**:
-  - **Interactive Terminal CLI** with ANSI styling (`npm start`).
-  - **Express SSE Web Server & UI** (`npm run dev:server`).
-  - **FastAPI Alternative Gateway** (`npm run dev:py`).
 
 ---
 
-## 🛠️ Tech Stack & Architecture
 
-- **Runtime & Language**: Node.js (ESM), TypeScript 5.7+
-- **Agent Framework**: LangChain LCEL (`RunnableSequence`, `RunnableMap`, `RunnableLambda`, `ChatPromptTemplate`, `StringOutputParser`)
-- **LLMs & Embeddings**: Groq (`llama-3.3-70b-versatile`, `llama-3.1-8b-instant`), Google Generative AI (`text-embedding-004`)
-- **Vector Reranker**: Custom mathematical Cosine Similarity engine ($\vec{u} \cdot \vec{v} / \|\vec{u}\|\|\vec{v}\|$)
-- **Frontend**: Vanilla HTML5/CSS3/JavaScript (Obsidian & Emerald Design System, Marked.js, Highlight.js)
+## 🚀 Features
+
+
+NexusAI has 8 specialized agents:
+
+
+1. 🌐 **Web Agent** - Searches the web for information.
+2. 🎓 **Academic Agent** - Searches for research and academic information.
+3. 👥 **Reddit Agent** - Finds opinions and discussions from Reddit.
+4. 📺 **YouTube Agent** - Finds useful YouTube videos.
+5. 🖼️ **Image Agent** - Searches for images.
+6. 🎬 **Video Agent** - Finds videos that can be played in the app.
+7. ✍️ **Writing Agent** - Helps with writing, coding, editing, and summaries.
+8. 💡 **Suggestion Agent** - Generates follow-up questions.
+
 
 ---
 
-## 📦 Quick Start & Installation
 
-### 1. Clone & Install Dependencies
+## 🔄 How It Works
 
-```bash
+
+```text
+User
+  ↓
+Select Agent
+  ↓
+Process Request
+  ↓
+Search / AI Processing
+  ↓
+Generate Result
+  ↓
+Show Result
+🛠️ Technologies Used
+TypeScript
+Node.js
+LangChain
+SearXNG
+HTML
+CSS
+JavaScript
+Groq AI
+Google Generative AI
+📦 Installation
+1. Clone the repository
+git clone YOUR_GITHUB_REPOSITORY_LINK
+2. Go to the project folder
 cd nexus-agentic-search
+3. Install dependencies
 npm install
-```
+🔑 Environment Variables
 
-### 2. Configure Environment Variables
+Create a .env file in the project folder.
 
-Create a `.env` file in the project root (see `.env.example`):
-
-```env
 PORT=3000
 SEARXNG_URL=http://localhost:8888
-GROQ_API_KEY=your_groq_api_key_here
-GEMINI_API_KEY=your_gemini_api_key_here
-```
+GROQ_API_KEY=your_groq_api_key
+GEMINI_API_KEY=your_gemini_api_key
 
-*(Note: If API keys are not provided yet, the application gracefully initializes with local offline vectors and fallback context for testing).*
+Add your own API keys.
 
----
-
-## 🖥️ Running the Application
-
-### Option A: Modern Web UI & API Server (Recommended)
-```bash
+▶️ Run the Project
+Start Web Application
 npm run dev:server
-```
-Open **`http://localhost:3000`** in your browser.
 
-### Option B: Interactive Terminal CLI
-```bash
+Then open:
+
+http://localhost:3000
+Start Terminal Version
 npm start
-```
+📁 Project Agents
+agents/
+├── webAgent.ts
+├── academicAgent.ts
+├── redditAgent.ts
+├── youtubeAgent.ts
+├── imageAgent.ts
+├── videoAgent.ts
+├── writingAgent.ts
+└── suggestionAgent.ts
 
-### Option C: FastAPI Alternative Backend
-```bash
-npm run dev:py
-```
+Each agent is responsible for a different task.
 
----
+🎯 Project Goal
 
-## 📡 API Endpoints
-
-### 1. Streaming Search & Answer
-`GET /api/search/stream?mode={mode}&query={query}&history={json_history}`
-- **Modes**: `web`, `academic`, `reddit`, `youtube`, `writing`
-- **Output**: `text/event-stream` SSE chunks (`sources`, `response`, `done`)
-
-### 2. Media & Utility Search
-`GET /api/search/list?mode={mode}&query={query}&history={json_history}`
-- **Modes**: `image`, `video`, `suggestion`
-- **Output**: `application/json`
-
-### 3. System Diagnostics
-`GET /api/health`
-- **Output**: Engine health, SearXNG connection status, and model states.
-
----
-
-## 📄 License
-MIT License. Built for advanced agentic search research and development.
+The goal of NexusAI is to create one AI application that can handle different types of tasks using specialized agents.
