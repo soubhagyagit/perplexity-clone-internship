@@ -1,30 +1,440 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" data-theme="dark">
 <head>
-    <title>Perplexity Clone</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NexusAI — Hyper-Agentic Search & Deep Research Engine</title>
+  <meta name="description" content="Next-generation multi-agent search engine powered by LangChain LCEL, multi-engine retrieval, and vector cosine reranking." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+
+  <!-- Lucide Icons & FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Marked.js for Markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <!-- Highlight.js for Code Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+  <!-- Application Stylesheet -->
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!-- App Container -->
+  <div class="app-root">
+    
+    <!-- Collapsible Sidebar: History & Agent Navigation -->
+    <aside class="app-sidebar" id="app-sidebar">
+      <div class="sidebar-top">
+        <div class="brand-container">
+          <div class="brand-glyph">
+            <i class="fa-solid fa-cube"></i>
+          </div>
+          <div class="brand-text">
+            <span class="brand-title">NEXUS<span class="brand-accent">AI</span></span>
+            <span class="brand-subtitle">Deep Research v1.0</span>
+          </div>
+        </div>
+        <button class="icon-btn" id="btn-sidebar-collapse" title="Collapse Sidebar">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+      </div>
 
-    <div class="container">
+      <button class="btn-new-chat" id="btn-new-chat">
+        <i class="fa-solid fa-plus"></i>
+        <span>New Research Session</span>
+      </button>
 
-        <h1>Perplexity Clone </h1>
+      <!-- Agent Categories List in Sidebar -->
+      <div class="sidebar-nav-section">
+        <div class="nav-label">SPECIALIZED AGENTS</div>
+        <div class="agent-nav-list" id="sidebar-agent-list">
+          <button class="agent-nav-item active" data-mode="web">
+            <i class="fa-solid fa-globe"></i>
+            <div class="agent-nav-info">
+              <span class="agent-nav-name">Web Intelligence</span>
+              <span class="agent-nav-desc">Multi-engine live search</span>
+            </div>
+            <span class="agent-pill">RAG</span>
+          </button>
+          <button class="agent-nav-item" data-mode="academic">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <div class="agent-nav-info">
+              <span class="agent-nav-name">Academic Research</span>
+              <span class="agent-nav-desc">ArXiv, Scholar, PubMed</span>
+            </div>
+            <span class="agent-pill">Papers</span>
+          </button>
+          <button class="agent-nav-item" data-mode="reddit">
+            <i class="fa-brands fa-reddit-alien"></i>
+            <div class="agent-nav-info">
+              <span class="agent-nav-name">Reddit & Community</span>
+              <span class="agent-nav-desc">Forums & discussions</span>
+            </div>
+            <span class="agent-pill">Crowd</span>
+          </button>
+          <button class="agent-nav-item" data-mode="youtube">
+            <i class="fa-brands fa-youtube"></i>
+            <div class="agent-nav-info">
+              <span class="agent-nav-name">YouTube Insights</span>
+              <span class="agent-nav-desc">Video knowledge & guides</span>
+            </div>
+            <span class="agent-pill">Media</span>
+          </button>
+          <button class="agent-nav-item" data-mode="image">
+            <i class="fa-solid fa-image"></i>
+            <div class="agent-nav-info">
+              <span class="agent-nav-name">Visual Discovery</span>
+              <span class="agent-nav-desc">High-res image gallery</span>
+            </div>
+            <span class="agent-pill">Gallery</span>
+          </button>
+          <button class="agent-nav-item" data-mode="video">
+            <i class="fa-solid fa-film"></i>
+            <div class="agent-nav-info">
+              <span class="agent-nav-name">Video Streams</span>
+              <span class="agent-nav-desc">Playable video feeds</span>
+            </div>
+            <span class="agent-pill">Video</span>
+          </button>
+          <button class="agent-nav-item" data-mode="writing">
+            <i class="fa-solid fa-pen-nib"></i>
+            <div class="agent-nav-info">
+              <span class="agent-nav-name">Writing & Code</span>
+              <span class="agent-nav-desc">Zero-search drafting</span>
+            </div>
+            <span class="agent-pill">Studio</span>
+          </button>
+        </div>
+      </div>
 
-        <div id="chatContainer"></div>
+      <!-- Recent Sessions History -->
+      <div class="sidebar-history-section">
+        <div class="nav-label">RECENT SESSIONS</div>
+        <div class="session-history-list" id="session-history-list">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
 
-        <div class="input-area">
-            <textarea
-                id="prompt"
-                placeholder="Ask anything..."
-            ></textarea>
+      <!-- System Health Indicator -->
+      <div class="sidebar-footer">
+        <div class="engine-status-badge" id="engine-status-badge">
+          <span class="status-dot online"></span>
+          <span class="status-text" id="status-engine-text">Core Engine Ready</span>
+        </div>
+        <button class="icon-btn" id="btn-open-settings" title="System Architecture & Settings">
+          <i class="fa-solid fa-sliders"></i>
+        </button>
+      </div>
+    </aside>
 
-            <button id="sendBtn">
-                Send
-            </button>
+    <!-- Main Workspace Stage -->
+    <main class="app-main">
+      <!-- Top Header Navigation -->
+      <header class="top-nav">
+        <div class="nav-left">
+          <button class="icon-btn mobile-menu-btn" id="btn-mobile-sidebar">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="active-agent-badge" id="active-agent-badge">
+            <i class="fa-solid fa-globe" id="badge-icon"></i>
+            <span id="badge-name">Web Intelligence Agent</span>
+            <span class="badge-tag" id="badge-category">Search & Answer</span>
+          </div>
         </div>
 
-    </div>
+        <div class="nav-center">
+          <div class="mode-pills-bar" id="mode-pills-bar">
+            <button class="pill-btn active" data-mode="web"><i class="fa-solid fa-globe"></i> Web</button>
+            <button class="pill-btn" data-mode="academic"><i class="fa-solid fa-graduation-cap"></i> Academic</button>
+            <button class="pill-btn" data-mode="reddit"><i class="fa-brands fa-reddit-alien"></i> Reddit</button>
+            <button class="pill-btn" data-mode="youtube"><i class="fa-brands fa-youtube"></i> YouTube</button>
+            <button class="pill-btn" data-mode="image"><i class="fa-solid fa-image"></i> Images</button>
+            <button class="pill-btn" data-mode="video"><i class="fa-solid fa-film"></i> Videos</button>
+            <button class="pill-btn" data-mode="writing"><i class="fa-solid fa-pen-nib"></i> Writing</button>
+          </div>
+        </div>
 
-    <script src="script.js"></script>
+        <div class="nav-right">
+          <button class="btn-ghost" id="btn-toggle-telemetry" title="Toggle Pipeline Telemetry Drawer">
+            <i class="fa-solid fa-terminal"></i>
+            <span class="btn-text">Telemetry</span>
+          </button>
+          <button class="btn-ghost" id="btn-export-session" title="Export Research Session">
+            <i class="fa-solid fa-arrow-down-to-bracket"></i>
+            <span class="btn-text">Export</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Scrollable Research Viewport -->
+      <div class="viewport-scroll" id="viewport-scroll">
+        
+        <!-- Welcome Hero View (when no queries yet) -->
+        <section class="welcome-hero" id="welcome-hero">
+          <div class="hero-chip">
+            <i class="fa-solid fa-sparkles"></i>
+            <span>LangChain LCEL • Vector Cosine Reranking • 8 Active Agents</span>
+          </div>
+          <h1 class="hero-title">Where Deep Research<br /><span class="gradient-text">Meets Precision Intelligence</span></h1>
+          <p class="hero-description">
+            Experience real-time cited multi-engine retrieval, scholarly ArXiv discovery, Reddit sentiment synthesis, and zero-latency media search.
+          </p>
+
+          <!-- Quick Agent Matrix Cards -->
+          <div class="agent-matrix-grid">
+            <div class="matrix-card" data-mode="web">
+              <div class="matrix-icon"><i class="fa-solid fa-globe"></i></div>
+              <h3>Web Intelligence</h3>
+              <p>Real-time cross-engine RAG with mathematical vector reranking.</p>
+            </div>
+            <div class="matrix-card" data-mode="academic">
+              <div class="matrix-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+              <h3>Academic Research</h3>
+              <p>Synthesize ArXiv, Google Scholar, PubMed & literature with rigor.</p>
+            </div>
+            <div class="matrix-card" data-mode="reddit">
+              <div class="matrix-icon"><i class="fa-brands fa-reddit-alien"></i></div>
+              <h3>Reddit Consensus</h3>
+              <p>Analyze real community opinions, consensus, and contrasting debates.</p>
+            </div>
+            <div class="matrix-card" data-mode="image">
+              <div class="matrix-icon"><i class="fa-solid fa-image"></i></div>
+              <h3>Visual Discovery</h3>
+              <p>Instant image extraction with high-res lightbox modals.</p>
+            </div>
+          </div>
+
+          <!-- Suggested Starter Prompts -->
+          <div class="starter-prompts-section">
+            <div class="starter-label">EXPLORE RECENT RESEARCH TOPICS:</div>
+            <div class="starter-chips-row">
+              <button class="starter-chip" data-mode="web" data-prompt="What are the major architectural differences between DeepSeek V3 and Llama 3?">
+                <i class="fa-solid fa-arrow-trend-up"></i> DeepSeek V3 vs Llama 3 Architecture
+              </button>
+              <button class="starter-chip" data-mode="academic" data-prompt="Synthesize recent papers on test-time compute scaling and chain-of-thought verification.">
+                <i class="fa-solid fa-microscope"></i> Test-Time Compute Scaling Papers
+              </button>
+              <button class="starter-chip" data-mode="reddit" data-prompt="What is the real developer consensus on migrating from Next.js to Vite React in production?">
+                <i class="fa-brands fa-reddit"></i> Vite vs Next.js Real Dev Consensus
+              </button>
+              <button class="starter-chip" data-mode="youtube" data-prompt="Best comprehensive tutorials for building agentic RAG with LangChain LCEL in 2025.">
+                <i class="fa-brands fa-youtube"></i> Agentic RAG LCEL Video Breakdowns
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Dynamic Conversation / Research Feed Container -->
+        <section class="research-feed" id="research-feed" style="display: none;">
+          <!-- Chat turn cards are injected here dynamically -->
+        </section>
+
+      </div>
+
+      <!-- Bottom Floating Command Bar -->
+      <footer class="bottom-command-bar">
+        <div class="command-bar-container">
+          <div class="command-input-wrapper">
+            <div class="agent-mode-selector-dropdown">
+              <button class="btn-selected-mode" id="btn-dropdown-mode">
+                <i class="fa-solid fa-globe" id="dropdown-icon"></i>
+                <span id="dropdown-name">Web</span>
+                <i class="fa-solid fa-chevron-up"></i>
+              </button>
+              <div class="mode-menu" id="mode-menu">
+                <div class="menu-item active" data-mode="web"><i class="fa-solid fa-globe"></i> Web Intelligence</div>
+                <div class="menu-item" data-mode="academic"><i class="fa-solid fa-graduation-cap"></i> Academic Research</div>
+                <div class="menu-item" data-mode="reddit"><i class="fa-brands fa-reddit-alien"></i> Reddit Community</div>
+                <div class="menu-item" data-mode="youtube"><i class="fa-brands fa-youtube"></i> YouTube Insights</div>
+                <div class="menu-item" data-mode="image"><i class="fa-solid fa-image"></i> Visual Discovery</div>
+                <div class="menu-item" data-mode="video"><i class="fa-solid fa-film"></i> Video Streams</div>
+                <div class="menu-item" data-mode="writing"><i class="fa-solid fa-pen-nib"></i> Writing Studio</div>
+              </div>
+            </div>
+
+            <textarea
+              id="search-input"
+              rows="1"
+              placeholder="Ask anything or explore deep research topics..."
+              autocomplete="off"
+            ></textarea>
+
+            <button class="btn-submit-search" id="btn-submit-search" title="Submit Search (Enter)">
+              <i class="fa-solid fa-arrow-up"></i>
+            </button>
+          </div>
+          <div class="command-bar-hints">
+            <span><kbd>Enter</kbd> to search</span>
+            <span><kbd>Shift</kbd> + <kbd>Enter</kbd> for newline</span>
+            <span>Focus Mode: <strong id="hint-mode-text">Web Intelligence</strong></span>
+          </div>
+        </div>
+      </footer>
+    </main>
+
+    <!-- Slide-over Telemetry & Agent Inspector Drawer -->
+    <aside class="telemetry-drawer" id="telemetry-drawer">
+      <div class="telemetry-header">
+        <div class="telemetry-title">
+          <i class="fa-solid fa-network-wired"></i>
+          <span>Agent Execution Telemetry</span>
+        </div>
+        <button class="icon-btn" id="btn-close-telemetry">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="telemetry-content">
+        <!-- Live Pipeline Stepper -->
+        <div class="telemetry-stepper">
+          <div class="step-item" id="step-rephrase">
+            <div class="step-dot"><i class="fa-solid fa-pen"></i></div>
+            <div class="step-details">
+              <span class="step-label">1. Query Rephrasing</span>
+              <span class="step-status" id="status-rephrase">Idle</span>
+              <div class="step-output" id="telemetry-rephrase-out"></div>
+            </div>
+          </div>
+
+          <div class="step-item" id="step-search">
+            <div class="step-dot"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <div class="step-details">
+              <span class="step-label">2. Multi-Engine Retrieval</span>
+              <span class="step-status" id="status-search">Idle</span>
+              <div class="step-output" id="telemetry-search-out"></div>
+            </div>
+          </div>
+
+          <div class="step-item" id="step-rerank">
+            <div class="step-dot"><i class="fa-solid fa-chart-simple"></i></div>
+            <div class="step-details">
+              <span class="step-label">3. Cosine Vector Reranking</span>
+              <span class="step-status" id="status-rerank">Idle</span>
+              <div class="step-output" id="telemetry-rerank-out"></div>
+            </div>
+          </div>
+
+          <div class="step-item" id="step-synthesis">
+            <div class="step-dot"><i class="fa-solid fa-bolt"></i></div>
+            <div class="step-details">
+              <span class="step-label">4. Context & Cited Synthesis</span>
+              <span class="step-status" id="status-synthesis">Idle</span>
+              <div class="step-output" id="telemetry-synthesis-out"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Vector Scores Matrix Inspector -->
+        <div class="telemetry-box">
+          <div class="box-header">
+            <span>Cosine Relevance Distribution</span>
+            <span class="badge" id="telemetry-doc-count">0 Docs</span>
+          </div>
+          <div class="vector-score-list" id="vector-score-list">
+            <div class="empty-hint">Awaiting search pipeline execution...</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Fullscreen Image Lightbox Modal -->
+  <div class="media-modal" id="image-lightbox-modal">
+    <div class="modal-backdrop" id="modal-backdrop-img"></div>
+    <div class="modal-card">
+      <button class="modal-close-btn" id="btn-close-img-modal"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-img-container">
+        <img id="lightbox-img" src="" alt="Full Preview" />
+      </div>
+      <div class="modal-img-meta">
+        <h3 id="lightbox-title">Image Title</h3>
+        <a id="lightbox-link" href="#" target="_blank" rel="noopener noreferrer">
+          <span>Open Source Webpage</span> <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fullscreen Video Player Modal -->
+  <div class="media-modal" id="video-player-modal">
+    <div class="modal-backdrop" id="modal-backdrop-vid"></div>
+    <div class="modal-card video-card-modal">
+      <button class="modal-close-btn" id="btn-close-vid-modal"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-video-container">
+        <iframe id="video-player-iframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <div class="modal-img-meta">
+        <h3 id="video-modal-title">Video Stream</h3>
+        <a id="video-modal-link" href="#" target="_blank" rel="noopener noreferrer">
+          <span>Watch on Source Channel</span> <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Architecture & Settings Modal -->
+  <div class="media-modal" id="settings-modal">
+    <div class="modal-backdrop" id="modal-backdrop-settings"></div>
+    <div class="modal-card settings-card-modal">
+      <button class="modal-close-btn" id="btn-close-settings"><i class="fa-solid fa-xmark"></i></button>
+      <h2><i class="fa-solid fa-sliders"></i> NexusAI Architecture & Diagnostics</h2>
+      
+      <div class="settings-grid">
+        <div class="setting-item">
+          <label>Groq API Key (Fast LLM Streaming)</label>
+          <input type="password" id="input-groq-key" placeholder="gsk_..." />
+          <span class="setting-subtext">Powers LLaMA 3.3 70B & 8B instant inference</span>
+        </div>
+        <div class="setting-item">
+          <label>Google Gemini API Key (Vector Embeddings)</label>
+          <input type="password" id="input-gemini-key" placeholder="AIzaSy..." />
+          <span class="setting-subtext">Powers semantic vector embeddings & Cosine reranking</span>
+        </div>
+        <div class="setting-item">
+          <label>SearXNG Gateway URL</label>
+          <input type="text" id="input-searxng-url" value="http://localhost:8888" />
+          <span class="setting-subtext">Multi-engine search aggregator URL</span>
+        </div>
+        <button class="btn-new-chat" id="btn-save-settings" style="margin: 6px 0; justify-content: center; background: var(--accent-primary); color: #000; font-weight: 700;">
+          <i class="fa-solid fa-floppy-disk" style="color: #000;"></i> Save & Apply Configuration
+        </button>
+      </div>
+
+      <div class="pipeline-explainer-box">
+        <h4>8 Specialized Agents Overview</h4>
+        <ul>
+          <li><strong>Group A (Search & Answer)</strong>: Web, Academic (ArXiv/Scholar), Reddit (Consensus), YouTube (Video Insights).</li>
+          <li><strong>Group B (Search & List)</strong>: Visual Discovery (Images), Video Streams (Players).</li>
+          <li><strong>Group C (Specialized Utilities)</strong>: Writing Assistant (Zero-Search Studio), Cognitive Suggestion Engine (Temp=0).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Floating Citation Tooltip -->
+  <div class="citation-tooltip" id="citation-tooltip">
+    <div class="citation-tooltip-header">
+      <span class="citation-num" id="tooltip-num">[1]</span>
+      <span class="citation-title" id="tooltip-title">Source Title</span>
+    </div>
+    <p class="citation-snippet" id="tooltip-snippet">Source snippet text...</p>
+    <div class="citation-footer">
+      <span class="citation-score" id="tooltip-score">95% match</span>
+      <span class="citation-url" id="tooltip-url">domain.com</span>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Application Script -->
+  <script src="app.js"></script>
 </body>
 </html>

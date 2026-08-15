@@ -1,22 +1,40 @@
 {
-  "name": "perplexity-clone",
+  "name": "nexus-agentic-search",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "description": "NexusAI: High-Performance Multi-Agent Search & Discovery Platform powered by LangChain LCEL, Vector Reranking, and 8 Specialized Agents",
   "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "dev:server": "tsx src/server.ts",
+    "demo": "tsx src/liveRun.ts",
+    "test": "tsx src/testAgents.ts",
+    "build": "tsc",
+    "dev:py": "python -m uvicorn fastapi_server:app --port 8000 --reload"
+  },
+  "keywords": [
+    "perplexity-clone",
+    "langchain",
+    "lcel",
+    "multi-agent",
+    "searxng",
+    "rag",
+    "vector-embeddings",
+    "reranking"
+  ],
   "dependencies": {
-    "@langchain/core": "^1.2.3",
-    "@langchain/groq": "^1.3.1",
-    "@langchain/openai": "^1.5.5",
-    "@tavily/core": "^0.7.6",
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1"
+    "@langchain/core": "^0.3.37",
+    "@langchain/google-genai": "^0.1.8",
+    "@langchain/groq": "^0.1.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.10.7",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
   }
 }
