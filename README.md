@@ -72,6 +72,8 @@ GEMINI_API_KEY=your_gemini_api_key
 
 Add your own API keys.
 
+Do not upload your .env file or API keys to GitHub.
+
 ▶️ Run the Project
 Start Web Application
 npm run dev:server
